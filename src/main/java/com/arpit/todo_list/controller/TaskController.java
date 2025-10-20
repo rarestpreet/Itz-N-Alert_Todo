@@ -1,6 +1,7 @@
 package com.arpit.todo_list.controller;
 
 import com.arpit.todo_list.model.Tasks;
+import com.arpit.todo_list.model.UpdatedTask;
 import com.arpit.todo_list.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/{userId}/tasks")
+@RequestMapping("/tasks")
+@CrossOrigin(origins = "http://localhost:63342")
 public class TaskController {
 
     private final TaskService taskService;
@@ -19,9 +21,8 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Tasks>> displayTasks(
-            @PathVariable Long userId) {
-        List<Tasks> tasks = taskService.getTasksByUserId(userId);
+    public ResponseEntity<List<Tasks>> displayTasks() {
+        List<Tasks> tasks = taskService.getTasks();
         if (!tasks.isEmpty()) {
             return ResponseEntity.ok(tasks);
         }
@@ -29,21 +30,14 @@ public class TaskController {
     }
 
     @GetMapping("/{taskId}")
-    public ResponseEntity<Tasks> displayTask(
-            @PathVariable Long userId,
-            @PathVariable Long taskId) {
-        Tasks tasks = taskService.getTask(userId, taskId);
-        if (tasks!=null) {
-            return ResponseEntity.ok(tasks);
-        }
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Tasks> displayTask(@PathVariable Long taskId) {
+        Tasks tasks = taskService.getTask(taskId);
+        return ResponseEntity.ok(tasks);
     }
 
     @PostMapping
-    public ResponseEntity<?> createTask(
-            @RequestBody Tasks task,
-            @PathVariable Long userId) {
-        int status = taskService.addTaskByUserId(task, userId);
+    public ResponseEntity<?> createTask(@RequestBody Tasks task) {
+        int status = taskService.addTask(task);
         if (status == 1) {
             return ResponseEntity.accepted().build();
         }
@@ -51,10 +45,8 @@ public class TaskController {
     }
 
     @DeleteMapping("/{taskId}")
-    public ResponseEntity<?> deleteTask(
-            @PathVariable Long userId,
-            @PathVariable Long taskId) {
-        int status = taskService.deleteTaskByUserId(userId, taskId);
+    public ResponseEntity<?> deleteTask(@PathVariable Long taskId) {
+        int status = taskService.deleteTask(taskId);
         if (status == 1) {
             return ResponseEntity.ok().build();
         }
@@ -63,10 +55,9 @@ public class TaskController {
 
     @PutMapping("/{taskId}")
     public ResponseEntity<?> updateTask(
-            @RequestBody Tasks task,
-            @PathVariable Long userId,
+            @RequestBody UpdatedTask task,
             @PathVariable Long taskId) {
-        int status = taskService.updateTask(task, userId, taskId);
+        int status = taskService.updateTask(task, taskId);
         if (status == 1) {
             return ResponseEntity.accepted().build();
         }

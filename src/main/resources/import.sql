@@ -1,0 +1,1 @@
+INSERT INTO tasks (task, done, due_date, date_created) VALUES ('Finish Spring Boot Todo API', FALSE, '2025-10-20', '2025-10-15'), ('Write documentation for project', FALSE, '2025-10-22', '2025-10-15'), ('Review and test all endpoints', TRUE, '2025-10-18', '2025-10-14');

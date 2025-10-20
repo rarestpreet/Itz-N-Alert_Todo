@@ -1,70 +1,55 @@
 package com.arpit.todo_list.service;
 
 import com.arpit.todo_list.model.Tasks;
-import com.arpit.todo_list.model.Users;
+import com.arpit.todo_list.model.UpdatedTask;
 import com.arpit.todo_list.repository.TaskRepo;
-import com.arpit.todo_list.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TaskService {
 
     private final TaskRepo taskRepo;
-    private final UserRepo userRepo;
 
     @Autowired
-    public TaskService(TaskRepo taskRepo, UserRepo userRepo) {
-        this.userRepo = userRepo;
+    public TaskService(TaskRepo taskRepo) {
         this.taskRepo = taskRepo;
     }
 
-    public List<Tasks> getTasksByUserId(Long userId) {
-        return taskRepo.findAll().stream()
-                .filter(tasks -> {
-                    return Objects.equals(tasks.getUser().getId(), userId);
-                }).toList();
+    public List<Tasks> getTasks() {
+        return taskRepo.findAll();
     }
 
-    public Tasks getTask(Long userId, Long taskId) {
-        return taskRepo.findTaskById(userId, taskId);
+    public Tasks getTask(Long taskId) {
+        return taskRepo.findById(taskId).orElse(null);
     }
 
-    public int deleteTaskByUserId(Long userId, Long taskId) {
-        taskRepo.deleteByIdAndUserId(taskId, userId);
+    public int deleteTask(Long taskId) {
+        taskRepo.deleteById(taskId);
         if (taskRepo.findById(taskId).isEmpty()) {
             return 1;
         }
         return 0;
     }
 
-    public int updateTask(Tasks task, Long userId,  Long taskId) {
+    public int updateTask(UpdatedTask task, Long taskId) {
         if (taskRepo.findById(taskId).isEmpty()) {
             return 0;
         }
-        Tasks oldTask = taskRepo.findById(task.getId()).orElseThrow(() ->
+        Tasks oldTask = taskRepo.findById(taskId).orElseThrow(() ->
                 new RuntimeException("Task not found"));
-        oldTask.setDone(task.isDone());
         oldTask.setDueDate(task.getDueDate());
         oldTask.setTask(task.getTask());
         taskRepo.save(oldTask);
         return 1;
     }
 
-    public int addTaskByUserId(Tasks task, Long userId) {
-        if (userRepo.findById(userId).isEmpty()) {
-            return 0;
-        }
-        Users user = userRepo.findById(userId).orElseThrow(() ->
-                new UsernameNotFoundException("User not found"));
+    public int addTask(Tasks task) {
         if (task.getDueDate() == null) {
-            task.setDueDate(LocalDateTime.now().plusDays(1));
+            task.setDueDate(LocalDate.now().plusDays(1));
         }
-        task.setUser(user);
         taskRepo.save(task);
         return 1;
     }

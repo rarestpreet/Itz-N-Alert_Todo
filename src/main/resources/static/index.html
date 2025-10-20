@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List with Popups</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Tasks</h1>
+    <div class="task-list" id="taskList"></div>
+</div>
+
+<!-- Floating Add Button -->
+<button class="fab" id="openAddPopup">＋</button>
+
+<!-- Add Task Popup -->
+<div class="popup-overlay" id="addPopup">
+    <div class="popup">
+        <form id="addTaskForm">
+            <h2>Add New Task</h2>
+
+            <label for="taskTitle">Task Title</label>
+            <input type="text" id="taskTitle" placeholder="Enter task name" required>
+
+            <label for="dueDate">Due Date</label>
+            <input type="date" id="dueDate" required min="">
+
+            <div class="popup-buttons">
+                <button type="submit" class="save-btn">Save Task</button>
+                <button type="button" class="cancel-btn" id="closeAddPopup">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Task Popup -->
+<div class="popup-overlay" id="editPopup">
+    <div class="popup">
+        <form id="editTaskForm">
+            <h2>Edit Task</h2>
+
+            <label for="taskId">Task Title</label>
+            <input type="text" id="taskId" readonly>
+
+            <label for="editTaskTitle">Task Title</label>
+            <input type="text" id="editTaskTitle" required>
+
+            <label for="editDueDate">Due Date</label>
+            <input type="date" id="editDueDate" required min="">
+
+            <div class="popup-buttons">
+                <button type="submit" class="save-btn">Save Changes</button>
+                <button type="button" class="cancel-btn" id="closeEditPopup">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
